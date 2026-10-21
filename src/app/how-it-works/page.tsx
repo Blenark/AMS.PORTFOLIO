@@ -17,7 +17,7 @@ const detail = [
   },
   {
     title: "The paperwork sends itself",
-    body: "A thermal receipt prints from the same flow, and an SMS plus email confirmation reaches the parent automatically — funded from your institute's own prepaid SMS wallet.",
+    body: "A thermal receipt prints from the same flow, and an SMS plus email confirmation reaches the parent automatically — paid upfront, from your institute's SMS wallet or the student's yearly plan.",
   },
 ];
 

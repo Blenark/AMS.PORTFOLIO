@@ -50,8 +50,8 @@ export default function Home() {
         <Container>
           <SectionHeading
             eyebrow="Pricing"
-            title="Simple plans, per institute"
-            description="Start on a trial, scale as you grow. Placeholder figures — final pricing set during onboarding."
+            title="Simple pricing, per institute"
+            description="A free month, then one payment for the system. No monthly fees."
             align="center"
             className="mx-auto mb-14 items-center"
           />
