@@ -2,18 +2,17 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/PageHero";
 import { Section, Container, SectionHeading } from "@/components/primitives";
 import { PricingTable } from "@/components/PricingTable";
+import { PricingDetails } from "@/components/PricingDetails";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { CtaSection } from "@/components/CtaSection";
 import { faqs } from "@/lib/content";
 
-const pricingFaqs = faqs.filter((f) =>
-  ["hardware", "SMS", "several institutes"].some((k) => f.q.includes(k) || f.a.includes(k)),
-);
+const pricingFaqs = faqs.filter((f) => f.pricing);
 
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Simple per-institute plans for ClassPass — start on a trial and scale as you grow. Placeholder LKR figures, confirmed during onboarding.",
+    "ClassPass pricing in LKR: a free month, then LKR 20,000 once for the system. No monthly fees. Receipt printers, student cards and SMS priced upfront.",
 };
 
 export default function PricingPage() {
@@ -22,7 +21,7 @@ export default function PricingPage() {
       <PageHero
         eyebrow="Pricing"
         title="Priced per institute, not per headache"
-        description="Pick a plan that fits your size today and move up when you grow. The figures below are placeholders — we confirm final pricing during onboarding."
+        description="Try everything free for a month, with the printer and punch devices on loan. After that you pay once for the system. There are no monthly fees, and no yearly fee up to 1,500 active students."
       />
 
       <Section>
@@ -30,6 +29,10 @@ export default function PricingPage() {
       </Section>
 
       <Section tone="muted">
+        <PricingDetails />
+      </Section>
+
+      <Section>
         <Container>
           <SectionHeading
             eyebrow="Good to know"
@@ -37,7 +40,7 @@ export default function PricingPage() {
             align="center"
             className="mx-auto mb-12 items-center"
           />
-          <FaqAccordion items={pricingFaqs.length ? pricingFaqs : faqs.slice(0, 4)} />
+          <FaqAccordion items={pricingFaqs} />
         </Container>
       </Section>
 

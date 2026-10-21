@@ -1,12 +1,15 @@
 import { Check } from "lucide-react";
 import { Container, Cta } from "@/components/primitives";
 import { Reveal } from "@/components/Reveal";
-import { tiers } from "@/lib/content";
+import { hardware, systemFeeLKR, tiers } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
-function formatLKR(amount: number) {
+export function formatLKR(amount: number) {
   return new Intl.NumberFormat("en-LK").format(amount);
 }
+
+/** System fee plus one receipt printer — the least an institute pays to go live. */
+export const startTotalLKR = systemFeeLKR + hardware[0].priceLKR;
 
 export function PricingTable() {
   return (
@@ -74,7 +77,8 @@ export function PricingTable() {
         })}
       </div>
       <p className="mt-8 text-center text-xs text-muted-foreground">
-        Prices shown are placeholders in LKR. Final pricing confirmed during onboarding.
+        Prices in LKR, per institute. To start you need the system and one receipt printer
+        (LKR {formatLKR(startTotalLKR)}), plus a card for each student from LKR 150.
       </p>
     </Container>
   );

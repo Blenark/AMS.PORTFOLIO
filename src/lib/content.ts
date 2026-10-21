@@ -140,7 +140,7 @@ export const features: Feature[] = [
       "Every payment triggers an SMS and email confirmation to the parent — no manual follow-up.",
     points: [
       "SMS + email on payment",
-      "Prepaid SMS wallet, funded per institute",
+      "SMS paid upfront: institute wallet or student plan",
       "Automatic refund if a message fails to send",
     ],
   },
@@ -153,6 +153,7 @@ export const features: Feature[] = [
     points: [
       "Self-scoped: no instructor can see another's data",
       "Mark and correct attendance for their classes",
+      "Daily attendance-count digest by email or SMS",
       "Track their own monthly earnings",
     ],
   },
@@ -325,63 +326,172 @@ export type Tier = {
   features: string[];
 };
 
-/** ⚠️ PLACEHOLDER pricing — invented figures in LKR. Replace with real tiers. */
+/** One-time system fee in LKR, paid after the free month. */
+export const systemFeeLKR = 20000;
+
+/** Active students an institute can have before the yearly fee applies. */
+export const yearlyFeeThreshold = 1500;
+
+/**
+ * Pricing tiers in LKR. Keep the API plan catalog (keys trial/standard/scale) in step.
+ * The model: a free month, then one system payment — no monthly fees, and no yearly fee
+ * unless an institute has more than 1,500 active students from its second year on.
+ */
 export const tiers: Tier[] = [
   {
-    name: "Starter",
-    priceLKR: 4900, // PLACEHOLDER
-    cadence: "per institute / month",
-    blurb: "For a single institute getting off paper.",
+    name: "Free Trial",
+    priceLKR: 0,
+    cadence: "one month, on us",
+    blurb:
+      "Run the whole system free for a month. We lend you the receipt printer and punch devices.",
     cta: { label: "Start free trial", href: "/contact" },
     features: [
-      "Up to 300 students",
-      "NFC attendance & fee collection",
-      "SMS + email confirmations",
-      "1 branded subdomain",
-      "Email support",
+      "The full system for 1 month",
+      "Printer & punch devices on loan",
+      "Pay only for the student cards you order",
+      "Stop any time and keep the cards you paid for",
     ],
   },
   {
-    name: "Growth",
-    priceLKR: 12900, // PLACEHOLDER
-    cadence: "per institute / month",
-    blurb: "For busy institutes with instructors and receipts.",
+    name: "ClassPass System",
+    priceLKR: systemFeeLKR,
+    cadence: "one-time · no monthly fees",
+    blurb:
+      "One payment after your trial. Up to 1,500 active students, there is no yearly fee at all.",
     highlight: true,
-    cta: { label: "Start free trial", href: "/contact" },
+    cta: { label: "Get started", href: "/contact" },
     features: [
-      "Up to 1,500 students",
-      "Everything in Starter",
-      "Instructor portal & revenue-share",
-      "Thermal receipt printing",
-      "Priority support",
+      "Up to 1,500 active students",
+      "NFC or QR card attendance",
+      "Fee collection & printed receipts",
+      "Reports as PDF or Excel",
+      "Instructor & parent portals",
+      "Exams, marks & tute distribution",
+      "Your own branded web address",
     ],
   },
   {
-    name: "Scale",
-    priceLKR: null,
-    cadence: "custom",
-    blurb: "For multi-branch groups and large networks.",
+    name: "Large institutes",
+    priceLKR: 8000,
+    cadence: "a year, from your second year · 1,500+ active students",
+    blurb:
+      "Your first year is free. After that, a small yearly fee applies only while you have more than 1,500 active students.",
     cta: { label: "Talk to us", href: "/contact" },
     features: [
-      "Unlimited students",
-      "Everything in Growth",
-      "Multiple institutes & branches",
-      "Onboarding & migration help",
-      "Dedicated support",
+      "Everything in ClassPass System",
+      "No limit on students",
+      "First year always free",
+      "Counted on your renewal date",
+      "No monthly fees",
     ],
   },
 ];
 
-export type Faq = { q: string; a: string };
+export type PriceLine = {
+  name: string;
+  priceLKR: number;
+  unit: string;
+  note: string;
+  optional?: boolean;
+};
+
+/** Hardware sold with the system. Lent free during the trial; buy one per desk or entrance. */
+export const hardware: PriceLine[] = [
+  {
+    name: "Receipt printer",
+    priceLKR: 15500,
+    unit: "each",
+    note: "Needed at every fee desk. Supplied by ClassPass and lent free during your trial.",
+  },
+  {
+    name: "Punch device",
+    priceLKR: 2000,
+    unit: "each",
+    note: "For NFC cards, one per entrance. Lent free during your trial.",
+    optional: true,
+  },
+];
+
+/** Student cards, printed and supplied only by ClassPass. Paid upfront, even during the trial. */
+export const cardOptions: PriceLine[] = [
+  {
+    name: "NFC tap card",
+    priceLKR: 280,
+    unit: "per student",
+    note: "Tap on any NFC phone or a punch device.",
+  },
+  {
+    name: "PVC card with QR",
+    priceLKR: 220,
+    unit: "per student",
+    note: "A tough plastic card, scanned with any phone camera.",
+  },
+  {
+    name: "Laminated QR card",
+    priceLKR: 150,
+    unit: "per student",
+    note: "Our lowest-cost card, scanned with any phone camera.",
+  },
+];
+
+/** Student count used for the worked example on the pricing page. */
+export const exampleStudents = 300;
+
+export type SmsOption = {
+  name: string;
+  priceLKR: number;
+  unit: string;
+  blurb: string;
+  points: string[];
+};
+
+/** Both SMS options are paid upfront. Credits are SMS segments: English 1, Sinhala 2. */
+export const smsOptions: SmsOption[] = [
+  {
+    name: "Student plan",
+    priceLKR: 300,
+    unit: "per student / year",
+    blurb: "Parents subscribe for the year and get alerts by SMS and email.",
+    points: [
+      "350 SMS credits a year",
+      "Email alerts included",
+      "Attendance and payment alerts always on",
+      "Parents choose the number and email",
+    ],
+  },
+  {
+    name: "Institute wallet",
+    priceLKR: 0.85,
+    unit: "per SMS credit",
+    blurb: "Your institute tops up a prepaid wallet and pays for the messages it sends.",
+    points: [
+      "Top up from LKR 500 to 5,000",
+      "Alerts for every student",
+      "Low-balance warning in the portal",
+      "Failed messages refunded automatically",
+    ],
+  },
+];
+
+/** Features on the way. No pricing or detail until they ship. */
+export const comingSoon: { title: string; body: string }[] = [
+  {
+    title: "Online lessons",
+    body: "Lessons and notes your students can open from home, right inside ClassPass.",
+  },
+];
+
+export type Faq = { q: string; a: string; /** Also shown on the pricing page. */ pricing?: boolean };
 
 export const faqs: Faq[] = [
   {
     q: "What hardware do we need to get started?",
-    a: "An NFC-capable phone or tablet for the card-checker app, and a set of NFC cards for students. A thermal receipt printer (58mm or 80mm, WiFi/Bluetooth/USB) is optional and only needed if you hand out printed receipts.",
+    a: "A phone or tablet for the card checker (with NFC for tap cards, or any working camera for QR cards) and a ClassPass receipt printer at LKR 15,500. A punch device for NFC cards is optional at LKR 2,000. Add a printer or punch device for each extra desk or entrance. Both are lent free during your trial.",
+    pricing: true,
   },
   {
     q: "Do students need to install an app?",
-    a: "No. Students carry an NFC card. The card-checker runs as a web app on the staff phone at the door — nothing to install for students or parents.",
+    a: "No. Students carry an NFC or QR card. The card-checker runs as a web app on the staff phone at the door — nothing to install for students or parents.",
   },
   {
     q: "How does attendance actually get marked?",
@@ -393,7 +503,18 @@ export const faqs: Faq[] = [
   },
   {
     q: "Who pays for the SMS messages?",
-    a: "Each institute funds its own prepaid SMS wallet with a fixed top-up, and messages are charged per segment as they send. If the gateway rejects a message, the credit is refunded automatically.",
+    a: "SMS is always paid upfront, in one of two ways. Parents can take a student plan at LKR 300 a year, with 350 SMS credits and email alerts. Or your institute tops up a prepaid wallet at LKR 0.85 per credit. An English SMS uses one credit and a Sinhala SMS uses two. If a message fails to send, the credit comes back automatically.",
+    pricing: true,
+  },
+  {
+    q: "Is there a monthly or yearly fee?",
+    a: "There is no monthly fee. You pay LKR 20,000 once for the system. With up to 1,500 active students there is no yearly fee either. If you have more than 1,500 active students, LKR 8,000 a year applies from your second year.",
+    pricing: true,
+  },
+  {
+    q: "What happens after the free trial?",
+    a: "If you continue, you pay for the system and the printer and punch devices we lent you, and keep everything. If you don't, return the hardware. The student cards you paid for are yours to keep.",
+    pricing: true,
   },
   {
     q: "Can instructors see everything?",
@@ -472,7 +593,6 @@ export const placeholders = [
   "site.email / site.supportEmail",
   "site.phone / site.phoneHref / site.whatsapp",
   "site.locationLine",
-  "tiers[*].priceLKR (Starter, Growth) — invented LKR figures",
   "posts[*] — sample blog articles",
   "stats — capability framing, adjust once you have real numbers",
 ] as const;

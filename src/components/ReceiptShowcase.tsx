@@ -23,7 +23,7 @@ export function ReceiptShowcase() {
           <ul className="mt-8 space-y-3">
             {[
               "Configure exactly what prints per institute",
-              "Prepaid SMS wallet — you fund only what you send",
+              "SMS paid upfront — a prepaid wallet or a yearly student plan",
               "Automatic refund if a message can't be delivered",
             ].map((t) => (
               <li key={t} className="flex items-start gap-3 text-sm">
